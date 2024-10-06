@@ -199,11 +199,9 @@ def generate_round_keys(binary_representation_key):
 def encryption(plain_str):
     # Convert to binary string
     binary_rep_of_input = str_to_bin(plain_str)
-    print("Binary of string:", binary_rep_of_input)
 
     # Key into binary
     binary_representation_key = key_in_binary_conv()
-    print("Binary key:", binary_representation_key)
 
     # Initialize lists to store round keys
     round_keys = generate_round_keys(binary_representation_key)
@@ -274,7 +272,6 @@ def encryption(plain_str):
 
         # Print or use the RPT for each round
 
-    print('\n')
     # At this point, 'lpt' and 'rpt' contain the final left and right halves after 16 rounds
 
     # After the final round, reverse the last swap
@@ -285,7 +282,6 @@ def encryption(plain_str):
 
     # Convert the result back to a string for better visualization
     final_cipher_str = ''.join(final_cipher)
-    print("Final cipher binary: ", final_cipher_str)
 
     # Print or use the final cipher(binary)
     # print("Final Cipher binary:", final_cipher_str, len(final_cipher_str))
@@ -300,7 +296,6 @@ def encryption(plain_str):
 def decryption(final_cipher):
     # Key into binary
     binary_representation_key = key_in_binary_conv()
-    print("Binary key:", binary_representation_key)
 
     # Initialize lists to store round keys
     round_keys = generate_round_keys(binary_representation_key)
@@ -366,7 +361,6 @@ def decryption(final_cipher):
     
         # Print or use the RPT for each round
     
-    print('\n')
     final_result = rpt + lpt
     # Perform the final permutation (IP-1)
     final_cipher = [final_result[ip_inverse_table[i] - 1] for i in range(64)]
@@ -387,12 +381,11 @@ def get_key(plain_str, final_cipher):
     find = False
     while (counter <= 18446744073709551615):
         original_key = f"{counter:064b}"
-        print(original_key)
         encryption(plain_str)
         if (plain_str == final_cipher):
             find = True
             break
-        counter = counter + 1
+        counter += 1
     if (find == False):
         print("Didn't find key")
 
@@ -410,7 +403,12 @@ while True:
         plain_str = input("Enter a string: ")
         original_key = input("Enter key: ")
 
-        enc = encryption(plain_str)
+        sub_str = [(plain_str[i:i+8]) for i in range(0, len(plain_str), 8)]
+        for sub in sub_str:
+            print("Binary of string:", sub)
+            enc += encryption(sub)
+
+        print("Binary key:", key_in_binary_conv())
         print("Final cipher text:", enc)
 
     elif (user_choice == "2"):
@@ -423,6 +421,7 @@ while True:
 
     elif (user_choice == "3"):
         # Decyption
+        dec = ''
         # enc = input("Enter enc string: ")
         enc_binary_str = input("Enter enc (bin) string: ")
         # my_string = ' '.join(my_list)
@@ -434,8 +433,13 @@ while True:
         # First we'll convert Final Cipher text into binary 
         # enc_to_binary = str_to_bin(enc)
 
-        # we'll call the decryption function 
-        dec = decryption(enc_to_binary)
+        # we'll call the decryption function
+        sub_str = [(enc_to_binary[i:i+64]) for i in range(0, len(enc_to_binary), 64)]
+        for sub in sub_str:
+            print("Binary of string:", sub)
+            dec += decryption(sub)
+
+        print("Binary key:", key_in_binary_conv())
         print("Decryption of Cipher :", dec)
 
             
