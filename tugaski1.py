@@ -377,17 +377,24 @@ def decryption(final_cipher):
 
 # Find key
 def get_key(plain_str, final_cipher):
-    counter = 72340172838076673
+    global original_key
+    counter = 4702394921427289928
     find = False
     while (counter <= 18446744073709551615):
-        original_key = f"{counter:064b}"
-        encryption(plain_str)
-        if (plain_str == final_cipher):
+        binary_key = f"{counter:064b}"
+        original_key = ''.join(chr(int(binary_key[i*8:i*8+8],2)) for i in range(len(binary_key)//8))
+        
+        dummy_str = encryption(plain_str)
+        # print(original_key, dummy_str, final_cipher)
+        if (dummy_str == final_cipher):
             find = True
             break
         counter += 1
     if (find == False):
         print("Didn't find key")
+    else:
+        print("Key finded:", original_key)
+        print("Binary key:", key_in_binary_conv())
 
 
 # Start
@@ -405,10 +412,12 @@ while True:
 
         sub_str = [(plain_str[i:i+8]) for i in range(0, len(plain_str), 8)]
         for sub in sub_str:
-            print("Binary of string:", sub)
+            print("Binary sub text", str_to_bin(sub))
+            print("Plain sub text:", sub)
             enc += encryption(sub)
 
         print("Binary key:", key_in_binary_conv())
+        print("Binary cipher:", str_to_bin(enc))
         print("Final cipher text:", enc)
 
     elif (user_choice == "2"):
@@ -417,6 +426,7 @@ while True:
         enc_binary_str = input("Enter enc binary: ")
         enc_to_binary = enc_binary_str.replace(" ", "")
         enc = binary_to_ascii(enc_to_binary)
+        print(enc)
         get_key(plain_str, enc)
 
     elif (user_choice == "3"):
@@ -424,11 +434,10 @@ while True:
         dec = ''
         # enc = input("Enter enc string: ")
         enc_binary_str = input("Enter enc (bin) string: ")
-        # my_string = ' '.join(my_list)
         enc_to_binary = enc_binary_str.replace(" ", "")
         enc = binary_to_ascii(enc_to_binary)
-        print("Cipher text:", enc)
         original_key = input("Enter key: ")
+        print("Cipher text:", enc)
 
         # First we'll convert Final Cipher text into binary 
         # enc_to_binary = str_to_bin(enc)
@@ -440,6 +449,7 @@ while True:
             dec += decryption(sub)
 
         print("Binary key:", key_in_binary_conv())
+        print("Binary Decryption :", str_to_bin(dec))
         print("Decryption of Cipher :", dec)
 
             
